@@ -70,9 +70,7 @@ void vTimerCallback( TimerHandle_t xTimer ) {
     uint32_t seconds = ( uint32_t ) pvTimerGetTimerID( xTimer );
     vTimerSetTimerID( xTimer, (void*)seconds+BEAT); //136 year to loop
     uint8_t scratchpad[8];
-    float temp;
-
-    temp=99.99;
+    float temp=99.99;
     if (ds18b20_measure(SENSOR_PIN, DS18B20_ANY, true) && ds18b20_read_scratchpad(SENSOR_PIN, DS18B20_ANY, scratchpad)) {
         temp = ((float)(scratchpad[1] << 8 | scratchpad[0]) * 625.0)/10000;
     }
@@ -81,7 +79,7 @@ void vTimerCallback( TimerHandle_t xTimer ) {
     if (old_temp!=temperature.value.float_value) \
         homekit_characteristic_notify(&temperature, HOMEKIT_FLOAT(temperature.value.float_value));
 
-    printf("%d %2.4f C\n", seconds, temp);
+    printf("%3d s %2.4f C\n", seconds, temp);
 }
 
 void device_init() {
@@ -105,7 +103,7 @@ homekit_accessory_t *accessories[] = {
                     HOMEKIT_CHARACTERISTIC(IDENTIFY, identify),
                     NULL
                 }),
-            HOMEKIT_SERVICE(VALVE, .primary=true,
+            HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .primary=true,
                 .characteristics=(homekit_characteristic_t*[]){
                     HOMEKIT_CHARACTERISTIC(NAME, "Temperature"),
                     &temperature,
