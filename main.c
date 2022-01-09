@@ -23,6 +23,7 @@
 #include <udplogger.h>
 #include "ds18b20/ds18b20.h"
 #include "math.h"
+#include "mqtt-client.h"
 
 #ifndef VERSION
  #error You must set VERSION=x.y.z to match github version tag x.y.z
@@ -72,19 +73,25 @@ void vTimerCallback( TimerHandle_t xTimer ) {
     vTimerSetTimerID( xTimer, (void*)seconds+BEAT); //136 year to loop
     uint8_t scratchpad[8];
     float temp=99.99;
+    char msg[PUB_MSG_LEN];
+    
     if (ds18b20_measure(SENSOR_PIN, DS18B20_ANY, true) && ds18b20_read_scratchpad(SENSOR_PIN, DS18B20_ANY, scratchpad)) {
         temp = ((float)(scratchpad[1] << 8 | scratchpad[0]) * 625.0)/10000;
     }
     float old_temp=temperature.value.float_value;
-    temperature.value.float_value=(float)(int)(temp*2+0.5)/2;
+    temperature.value.float_value=(float)(int)(temp*10+0.5)/10;
     if (old_temp!=temperature.value.float_value) \
         homekit_characteristic_notify(&temperature, HOMEKIT_FLOAT(temperature.value.float_value));
 
     printf("%3d s %2.4f C\n", seconds, temp);
+    snprintf(msg, PUB_MSG_LEN, "{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.1f\"}", dmtczidx, temp);
+    if (xQueueSend(publish_queue, (void *)msg, 0) == pdFALSE) printf("Publish queue overflow.\n");
 }
 
 void device_init() {
     gpio_set_pullup(SENSOR_PIN, true, true);
+    //sysparam_set_string("ota_string", "192.168.178.5;DS18B20;testingonly;63"); //can be used if not using LCM
+    mqtt_client_init(3);
     xTimer=xTimerCreate( "Timer", BEAT*1000/portTICK_PERIOD_MS, pdTRUE, (void*)0, vTimerCallback);
     xTimerStart(xTimer, 0);
 }
