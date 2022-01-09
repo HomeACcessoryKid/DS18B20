@@ -1,9 +1,10 @@
-/*  (c) 2020 HomeAccessoryKid
+/*  (c) 2020-2022 HomeAccessoryKid
  *  This is a temperature sensor based on a single Dallas DS18B20
  *  It uses any ESP8266 with as little as 1MB flash. 
  *  GPIO-2 is used as a single one-wire DS18B20 sensor to measure the temperature
  *  UDPlogger is used to have remote logging
  *  LCM is enabled in case you want remote updates
+ *  MQTT is used to send measurements upstream
  */
 
 #include <stdio.h>
