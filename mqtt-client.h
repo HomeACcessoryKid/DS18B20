@@ -4,16 +4,10 @@
 #ifndef __MQTT_CLIENT_H__
 #define __MQTT_CLIENT_H__
 
-#include <stdio.h>
 #include <espressif/esp_wifi.h>
 #include <espressif/esp_sta.h>
-//#include <espressif/esp_system.h> //for timestamp report only
-#include <esp/uart.h>
-#include <esp8266.h>
 #include <FreeRTOS.h>
-#include <task.h>
 #include <string.h>
-
 #include <paho_mqtt_c/MQTTESP8266.h>
 #include <paho_mqtt_c/MQTTClient.h>
 #include <semphr.h>

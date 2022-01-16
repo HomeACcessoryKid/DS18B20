@@ -5,8 +5,7 @@ QueueHandle_t publish_queue;
 SemaphoreHandle_t wifi_alive;
 char    *mqtthost=NULL, *mqttuser=NULL, *mqttpass=NULL, *dmtczidx=NULL;
 
-static const char *  get_my_id(void)
-{
+static const char *  get_my_id(void) {
     // Use MAC address for Station as unique ID
     static char my_id[13];
     static bool my_id_done = false;
@@ -16,8 +15,7 @@ static const char *  get_my_id(void)
         return my_id;
     if (!sdk_wifi_get_macaddr(STATION_IF, (uint8_t *)my_id))
         return NULL;
-    for (i = 5; i >= 0; --i)
-    {
+    for (i = 5; i >= 0; --i) {
         x = my_id[i] & 0x0F;
         if (x > 9) x += 7;
         my_id[i * 2 + 1] = x + '0';
@@ -31,8 +29,7 @@ static const char *  get_my_id(void)
 }
 
 #define BACKOFF1 100/portTICK_PERIOD_MS
-static void  mqtt_task(void *pvParameters)
-{
+static void  mqtt_task(void *pvParameters) {
     int ret         = 0;
     int backoff = BACKOFF1;
     struct mqtt_network network;
@@ -57,7 +54,7 @@ static void  mqtt_task(void *pvParameters)
     data.cleansession   = 0;
 
     while(1) {
-        xSemaphoreTake(wifi_alive, portMAX_DELAY);
+        //xSemaphoreTake(wifi_alive, portMAX_DELAY);
         printf("%s: started\n", __func__);
         printf("%s: (Re)connecting to MQTT server %s ... ",__func__,
                mqtthost);
@@ -90,7 +87,7 @@ static void  mqtt_task(void *pvParameters)
 
             msg[PUB_MSG_LEN - 1] = 0;
             while(xQueueReceive(publish_queue, (void *)msg, 0) == pdTRUE){
-                printf("got message to publish\n");
+//                 printf("got message to publish\n");
                 mqtt_message_t message;
                 message.payload = msg;
                 message.payloadlen = strlen(msg);
@@ -114,12 +111,10 @@ static void  mqtt_task(void *pvParameters)
     }
 }
 
-static void  wifi_task(void *pvParameters)
-{
+static void  wifi_task(void *pvParameters) {
     uint8_t status  = 0;
     uint8_t retries = 30;
-    while(1)
-    {
+    while(1) {
         while ((status != STATION_GOT_IP) && (retries)){
             status = sdk_wifi_station_get_connect_status();
             printf("%s: status = %d\n", __func__, status );
