@@ -84,7 +84,8 @@ void vTimerCallback( TimerHandle_t xTimer ) {
         homekit_characteristic_notify(&temperature, HOMEKIT_FLOAT(temperature.value.float_value));
 
     printf("%3d s %2.4f C\n", seconds, temp);
-    mqtt_client_publish("{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.1f\"}", dmtczidx, temp); //TODO: check if it did not overflow?
+    int n=mqtt_client_publish("{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.1f\"}", dmtczidx, temp);
+    if (n<0) printf("MQTT publish failed: %d\n",n);
 }
 
 mqtt_config_t mqttconf=MQTT_DEFAULT_CONFIG;

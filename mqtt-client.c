@@ -37,11 +37,6 @@ static const char *  get_my_id(void) {
 
 #define BACKOFF1 100/portTICK_PERIOD_MS
 static void  mqtt_task(void *pvParameters) {
-    vTaskDelay(200);
-    printf("mqtt_init\n");
-    vTaskDelay(11);
-    printf("%s %s %s %s %d %d %d %d\n",mqttconf->host,mqttconf->user,mqttconf->pass,mqttconf->topic,(int)uxQueueSpacesAvailable(publish_queue),mqttconf->queue_size,mqttconf->msg_len,mqttconf->port);
-
     int ret = 0;
     int backoff = BACKOFF1;
     struct mqtt_network network;
@@ -50,7 +45,13 @@ static void  mqtt_task(void *pvParameters) {
     uint8_t mqtt_readbuf[4]; //we do not intend to use this, but a minimum might be needed?? guessing 4
     mqtt_packet_connect_data_t data = mqtt_packet_connect_data_initializer;
     char msg[mqttconf->msg_len];
-    int     mqtt_buf_len=100;
+    int  mqtt_buf_len;
+    
+    ret=20+sizeof(mqtt_client_id)+strlen(mqttconf->user)+strlen(mqttconf->pass);
+    mqtt_buf_len=8+strlen(mqttconf->topic)+mqttconf->msg_len;
+    vTaskDelay(200);
+    printf("con=%d pub=%d\n",ret,mqtt_buf_len);
+    if (mqtt_buf_len<ret) mqtt_buf_len=ret;
     uint8_t *mqtt_buf=malloc(mqtt_buf_len);
 
     mqtt_network_new( &network );
