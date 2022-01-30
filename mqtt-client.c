@@ -49,8 +49,6 @@ static void  mqtt_task(void *pvParameters) {
     
     ret=20+sizeof(mqtt_client_id)+strlen(mqttconf->user)+strlen(mqttconf->pass);
     mqtt_buf_len=8+strlen(mqttconf->topic)+mqttconf->msg_len;
-    vTaskDelay(200);
-    printf("con=%d pub=%d\n",ret,mqtt_buf_len);
     if (mqtt_buf_len<ret) mqtt_buf_len=ret;
     uint8_t *mqtt_buf=malloc(mqtt_buf_len);
 
