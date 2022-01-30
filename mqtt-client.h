@@ -4,22 +4,22 @@
 #ifndef __MQTT_CLIENT_H__
 #define __MQTT_CLIENT_H__
 
-#include <espressif/esp_wifi.h>
-#include <espressif/esp_sta.h>
-#include <FreeRTOS.h>
-#include <string.h>
-#include <paho_mqtt_c/MQTTESP8266.h>
-#include <paho_mqtt_c/MQTTClient.h>
-#include <semphr.h>
-#include <sysparam.h>
+// #define PUB_MSG_LEN 48  // suitable for a single Domoticz counter update
+// #define MQTT_PORT  1883
+// #define MQTT_topic "domoticz/in"
+#define MQTT_DEFAULT_CONFIG {3,48,NULL,1883,NULL,NULL,"domoticz/in"}
 
-#define PUB_MSG_LEN 48  // suitable for a Domoticz counter update
-#define MQTT_PORT  1883
-#define MQTT_topic "domoticz/in"
+typedef struct mqtt_config {
+    int  queue_size;
+    int  msg_len;
+    char *host;
+    int  port;
+    char *user;
+    char *pass;
+    char *topic;
+} mqtt_config_t;
 
-extern QueueHandle_t publish_queue;
-extern char *dmtczidx;
-
-void mqtt_client_init(int queue_size);
+void mqtt_client_init(mqtt_config_t *config);
+int  mqtt_client_publish(char *format,  ...);
 
 #endif // __MQTT_CLIENT_H__
