@@ -47,10 +47,11 @@ static void  mqtt_task(void *pvParameters) {
     struct mqtt_network network;
     mqtt_client_t client = mqtt_client_default;
     char mqtt_client_id[20];
-    uint8_t mqtt_buf[100]; //TODO: replace with a mqttconf->msg_len formula
-    uint8_t mqtt_readbuf[4];
+    uint8_t mqtt_readbuf[4]; //we do not intend to use this, but a minimum might be needed?? guessing 4
     mqtt_packet_connect_data_t data = mqtt_packet_connect_data_initializer;
     char msg[mqttconf->msg_len];
+    int     mqtt_buf_len=100;
+    uint8_t *mqtt_buf=malloc(mqtt_buf_len);
 
     mqtt_network_new( &network );
     memset(mqtt_client_id, 0, sizeof(mqtt_client_id));
@@ -77,7 +78,7 @@ static void  mqtt_task(void *pvParameters) {
             continue;
         }
         printf("done\n");
-        mqtt_client_new(&client, &network, 5000, mqtt_buf, 100, mqtt_readbuf, 4);
+        mqtt_client_new(&client, &network, 5000, mqtt_buf, mqtt_buf_len, mqtt_readbuf, 4);
         printf("%s: send MQTT connect ... ", __func__);
         ret = mqtt_connect(&client, &data);
         if(ret){
