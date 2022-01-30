@@ -40,7 +40,7 @@ static void  mqtt_task(void *pvParameters) {
     vTaskDelay(200);
     printf("mqtt_init\n");
     vTaskDelay(11);
-    printf("%s %s %s %s %d %d %d\n",mqttconf->host,mqttconf->user,mqttconf->pass,mqttconf->topic,mqttconf->queue_size,mqttconf->msg_len,mqttconf->port);
+    printf("%s %s %s %s %d %d %d %d\n",mqttconf->host,mqttconf->user,mqttconf->pass,mqttconf->topic,(int)uxQueueSpacesAvailable(publish_queue),mqttconf->queue_size,mqttconf->msg_len,mqttconf->port);
 
     int ret = 0;
     int backoff = BACKOFF1;
@@ -48,7 +48,7 @@ static void  mqtt_task(void *pvParameters) {
     mqtt_client_t client = mqtt_client_default;
     char mqtt_client_id[20];
     uint8_t mqtt_buf[100]; //TODO: replace with a mqttconf->msg_len formula
-    uint8_t mqtt_readbuf[100];
+    uint8_t mqtt_readbuf[4];
     mqtt_packet_connect_data_t data = mqtt_packet_connect_data_initializer;
     char msg[mqttconf->msg_len];
 
@@ -77,7 +77,7 @@ static void  mqtt_task(void *pvParameters) {
             continue;
         }
         printf("done\n");
-        mqtt_client_new(&client, &network, 5000, mqtt_buf, 100, mqtt_readbuf, 100);
+        mqtt_client_new(&client, &network, 5000, mqtt_buf, 100, mqtt_readbuf, 4);
         printf("%s: send MQTT connect ... ", __func__);
         ret = mqtt_connect(&client, &data);
         if(ret){
