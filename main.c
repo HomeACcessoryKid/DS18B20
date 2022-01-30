@@ -85,7 +85,7 @@ void vTimerCallback( TimerHandle_t xTimer ) {
 
     printf("%3d s %2.4f C\n", seconds, temp);
     int n=mqtt_client_publish("{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.1f\"}", dmtczidx, temp);
-    if (n<0) printf("MQTT publish failed: %d\n",n);
+    if (n<0) printf("MQTT publish failed because %s\n",MQTT_CLIENT_ERROR(n));
 }
 
 mqtt_config_t mqttconf=MQTT_DEFAULT_CONFIG;

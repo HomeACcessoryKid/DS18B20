@@ -1,4 +1,6 @@
-/*  (c) 2021-2022 HomeAccessoryKid */
+/*  (c) 2021-2022 HomeAccessoryKid
+ *  Intended as a Domoticz publish only feed
+ */
 #include <stdarg.h>
 #include <espressif/esp_wifi.h>
 #include <espressif/esp_sta.h>
