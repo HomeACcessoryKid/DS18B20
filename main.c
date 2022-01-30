@@ -108,7 +108,6 @@ void device_init() {
     gpio_set_pullup(SENSOR_PIN, true, true);
     //sysparam_set_string("ota_string", "192.168.178.5;DS18B20;fakepassword;63"); //can be used if not using LCM
     ota_string();
-    mqttconf.msg_len=30;
     mqtt_client_init(&mqttconf);
     xTimer=xTimerCreate( "Timer", BEAT*1000/portTICK_PERIOD_MS, pdTRUE, (void*)0, vTimerCallback);
     xTimerStart(xTimer, 0);
