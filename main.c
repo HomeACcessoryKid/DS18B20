@@ -84,7 +84,7 @@ void vTimerCallback( TimerHandle_t xTimer ) {
         homekit_characteristic_notify(&temperature, HOMEKIT_FLOAT(temperature.value.float_value));
 
     printf("%3d s %2.4f C\n", seconds, temp);
-    int n=mqtt_client_publish("{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.4f\"}", dmtczidx, temp);
+    int n=mqtt_client_publish("{\"idx\":%s,\"nvalue\":0,\"svalue\":\"%.4f\"}", dmtczidx, temp); //full resolution
     if (n<0) printf("MQTT publish failed because %s\n",MQTT_CLIENT_ERROR(n));
 }
 
